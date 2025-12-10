@@ -50,6 +50,10 @@ python mat2npz_batch.py
 
 ### 界面说明
 
+界面如图（有点儿丑请忽略）
+
+![](https://github.com/Haoyi-SJTU/mat2npz/blob/main/Screenshot.png)
+
 #### 1. 输入设置
 - **MAT文件文件夹**：选择包含要转换的 `.mat` 文件的文件夹
 - **输出文件夹**：选择或输入保存 `.npz` 文件的文件夹（默认为输入文件夹下的 `npz_output` 子文件夹）
@@ -223,6 +227,10 @@ python mat2npz_batch.py
 ```
 
 ### Interface Description
+
+Interface is as following
+
+![](https://github.com/Haoyi-SJTU/mat2npz/blob/main/Screenshot.png)
 
 #### 1. Input Settings
 - **MAT Files Folder**: Select folder containing `.mat` files to convert
