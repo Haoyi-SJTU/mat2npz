@@ -1,20 +1,16 @@
 # MAT to NPZ Batch Converter Tool
 
-## 📋 Overview
+## Overview
 
 This is a Python Tkinter-based graphical interface tool for batch converting MATLAB `.mat` files to NumPy `.npz` files. The tool allows you to extract specified variables from multiple MAT files and save them as NPZ files with the same name, filtering out unnecessary metadata.
 
-## ✨ Features
+## Features
 
-- 🎯 **Selective Extraction**: Extract only the variables you specify, filtering out metadata like `__header__`, `__version__`
-- 📁 **Batch Processing**: Convert all MAT files in a folder with one click
-- 🎨 **Graphical Interface**: Intuitive user interface, no coding required
-- 🔄 **Recursive Processing**: Support for processing files in subfolders
-- 📊 **Real-time Logging**: Display detailed conversion progress and results
-- 🎚️ **Variable Configuration**: Dynamically add/remove variables to extract
-- 📁 **Automatic Directory**: Automatically create output folder structure
+-  **Graphical Interface**: Intuitive user interface, no coding required
+-  **Batch Processing**: Convert **ALL** mat files in a folder with **ONE** click
 
-## 📦 System Requirements
+
+## System Requirements
 
 ### Required Environment
 - Python 3.6 or higher
@@ -187,13 +183,9 @@ This tool is open source under the MIT License.
 
 ##  功能特点
 
--  **选择性提取**：只提取指定的变量，过滤 `__header__`、`__version__` 等元数据
--  **批量处理**：一键转换整个文件夹中的所有 MAT 文件
--  **图形界面**：直观的用户界面，无需编写代码
--  **递归处理**：支持处理子文件夹中的文件
--  **实时日志**：显示详细的转换进度和结果
--  **变量配置**：动态添加/删除要提取的变量
--  **自动目录**：自动创建输出文件夹结构
+-  **图形界面**：直观的图形用户界面
+-  **批量处理**：**一键转换**文件夹中的**所有** MAT 文件
+
 
 ##  系统要求
 
@@ -275,7 +267,7 @@ python mat2npz_batch.py
    - 在日志窗口中查看转换进度
    - 转换完成后显示统计信息
 
-## 📁 文件结构示例
+## 文件结构示例
 
 ### 转换前
 ```
@@ -325,22 +317,16 @@ example.npz
 
 #### 1. "未找到任何 .mat 文件"
 - 确认输入文件夹路径正确
-- 确保文件夹中包含 `.mat` 文件
-- 检查文件扩展名是否正确（应为 `.mat`）
+- 文件夹中包含 `.mat` 文件
 
 #### 2. "未找到目标变量"
 - 确认变量名拼写正确
 - MAT 文件中可能使用不同的变量名
-- 使用 MATLAB 或其他工具检查 MAT 文件中的变量名
 
-#### 3. 内存不足错误
-- 对于大型 MAT 文件，确保有足够的内存
+#### 3. 内存不足
 - 可以分批处理文件
-- 考虑增加系统虚拟内存
+- 增加虚拟内存，或者升级电脑的内存条（如果不差钱的话）
 
-#### 4. 权限错误
-- 确保有写入输出文件夹的权限
-- 以管理员身份运行程序（如果需要）
 
 ### 错误消息
 
