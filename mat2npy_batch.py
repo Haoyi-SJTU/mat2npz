@@ -4,39 +4,17 @@ import tkinter as tk
 from tkinter import filedialog, messagebox, ttk
 import scipy.io
 import numpy as np
-
-
-
-import os
-import glob
-import scipy.io
-import numpy as np
 import traceback
 from pathlib import Path
 
 def batch_mat_to_npz(mat_folder, target_vars, output_folder=None, overwrite=False):
     """
     批量将文件夹中的MAT文件转换为只包含目标变量的NPZ文件
-    
-    参数:
-    mat_folder: 包含MAT文件的文件夹路径
-    target_vars: 要提取的变量名列表，如 ['angle_ideal', 'angle_residual']
-    output_folder: 输出文件夹路径，默认与输入文件夹相同
-    overwrite: 是否覆盖已存在的文件
-    
-    返回:
-    success_list: 成功处理的文件列表
-    error_list: 处理失败的文件及错误信息
     """
-    
-    # 设置输出文件夹
     if output_folder is None:
         output_folder = os.path.join(mat_folder, 'npz_output')
     
-    # 创建输出文件夹
     os.makedirs(output_folder, exist_ok=True)
-    
-    # 获取所有MAT文件
     mat_files = glob.glob(os.path.join(mat_folder, '*.mat'))
     
     if not mat_files:
@@ -50,20 +28,15 @@ def batch_mat_to_npz(mat_folder, target_vars, output_folder=None, overwrite=Fals
     
     for mat_file in mat_files:
         try:
-            # 提取文件名（不带扩展名）
             filename = os.path.basename(mat_file)
             file_stem = os.path.splitext(filename)[0]
             npz_file = os.path.join(output_folder, f"{file_stem}.npz")
             
-            # 检查是否已存在
             if os.path.exists(npz_file) and not overwrite:
                 print(f"跳过 {filename} (文件已存在)")
                 continue
             
-            # 加载.mat文件
             mat_data = scipy.io.loadmat(mat_file)
-            
-            # 提取目标变量
             target_data = {}
             missing_vars = []
             
@@ -82,15 +55,12 @@ def batch_mat_to_npz(mat_folder, target_vars, output_folder=None, overwrite=Fals
                 error_list.append((filename, error_msg))
                 continue
             
-            # 保存为.npz文件
             np.savez(npz_file, **target_data)
             
-            # 验证保存结果
             verify_data = np.load(npz_file)
             saved_vars = verify_data.files
             verify_data.close()
             
-            # 记录成功
             print(f"✓ 成功: {filename} -> 保存变量: {saved_vars}")
             success_list.append({
                 'mat_file': filename,
@@ -104,45 +74,24 @@ def batch_mat_to_npz(mat_folder, target_vars, output_folder=None, overwrite=Fals
             print(f"✗ 错误: {filename} - {error_msg}")
             error_list.append((filename, error_msg))
     
-    # 打印统计信息
     print(f"\n{'='*50}")
     print(f"处理完成!")
     print(f"成功: {len(success_list)} 个文件")
     print(f"失败: {len(error_list)} 个文件")
     
-    if success_list:
-        print("\n成功处理的文件:")
-        for item in success_list:
-            print(f"  {item['mat_file']} -> {item['npz_file']} ({', '.join(item['saved_vars'])})")
-    
-    if error_list:
-        print("\n失败的文件:")
-        for filename, error in error_list:
-            print(f"  {filename}: {error}")
-    
     return success_list, error_list
 
-
 def convert_with_progress(mat_folder, target_vars, output_folder=None):
-    """
-    带进度显示的批量转换函数
-    """
     from tqdm import tqdm
-    import glob
-    import os
-    
     if output_folder is None:
         output_folder = os.path.join(mat_folder, 'converted_npz')
     
     os.makedirs(output_folder, exist_ok=True)
-    
     mat_files = glob.glob(os.path.join(mat_folder, '*.mat'))
     
     if not mat_files:
         print("未找到.mat文件")
         return []
-    
-    print(f"开始处理 {len(mat_files)} 个文件...")
     
     results = []
     for mat_file in tqdm(mat_files, desc="转换进度"):
@@ -151,10 +100,7 @@ def convert_with_progress(mat_folder, target_vars, output_folder=None):
         npz_file = os.path.join(output_folder, f"{file_stem}.npz")
         
         try:
-            # 加载并提取变量
             mat_data = scipy.io.loadmat(mat_file)
-            
-            # 提取目标变量
             target_data = {}
             for var_name in target_vars:
                 if var_name in mat_data:
@@ -169,31 +115,13 @@ def convert_with_progress(mat_folder, target_vars, output_folder=None):
         except Exception as e:
             results.append((filename, False, str(e)))
     
-    # 显示结果摘要
     success_count = sum(1 for r in results if r[1])
     print(f"\n转换完成: {success_count}/{len(results)} 成功")
-    
     return results
 
-
 def convert_mat_to_npz_single(mat_file, target_vars, output_path=None):
-    """
-    转换单个MAT文件
-    
-    参数:
-    mat_file: MAT文件路径
-    target_vars: 目标变量列表
-    output_path: 输出NPZ文件路径，默认与输入文件同目录同名
-    
-    返回:
-    bool: 是否成功
-    str: 消息
-    """
     try:
-        # 加载MAT文件
         mat_data = scipy.io.loadmat(mat_file)
-        
-        # 提取目标变量
         target_data = {}
         for var_name in target_vars:
             if var_name in mat_data:
@@ -202,16 +130,13 @@ def convert_mat_to_npz_single(mat_file, target_vars, output_path=None):
         if not target_data:
             return False, "未找到任何目标变量"
         
-        # 设置输出路径
         if output_path is None:
             dir_name = os.path.dirname(mat_file)
             file_stem = os.path.splitext(os.path.basename(mat_file))[0]
             output_path = os.path.join(dir_name, f"{file_stem}.npz")
         
-        # 保存
         np.savez(output_path, **target_data)
         
-        # 验证
         loaded_data = np.load(output_path)
         saved_vars = loaded_data.files
         loaded_data.close()
@@ -221,48 +146,25 @@ def convert_mat_to_npz_single(mat_file, target_vars, output_path=None):
     except Exception as e:
         return False, f"错误: {str(e)}"
 
-
-def process_folder_recursive(input_folder, target_vars, output_base_folder=None, 
-                            file_pattern='*.mat'):
-    """
-    递归处理文件夹及其子文件夹中的所有MAT文件
-    
-    参数:
-    input_folder: 输入文件夹
-    target_vars: 目标变量列表
-    output_base_folder: 输出基础文件夹
-    file_pattern: 文件匹配模式
-    """
-    from pathlib import Path
-    
+def process_folder_recursive(input_folder, target_vars, output_base_folder=None, file_pattern='*.mat'):
     input_path = Path(input_folder)
     
     if output_base_folder is None:
         output_base_folder = input_path.parent / f"{input_path.name}_npz"
     
-    # 递归查找所有MAT文件
     mat_files = list(input_path.rglob(file_pattern))
     
     if not mat_files:
         print(f"在 {input_folder} 及其子文件夹中未找到 {file_pattern} 文件")
         return []
     
-    print(f"找到 {len(mat_files)} 个 MAT 文件")
-    
     results = []
     for mat_file in mat_files:
-        # 计算相对路径
         rel_path = mat_file.relative_to(input_path)
-        
-        # 构建输出路径
         output_file = output_base_folder / rel_path.with_suffix('.npz')
         output_file.parent.mkdir(parents=True, exist_ok=True)
         
-        # 转换文件
-        success, message = convert_mat_to_npz_single(
-            str(mat_file), target_vars, str(output_file)
-        )
-        
+        success, message = convert_mat_to_npz_single(str(mat_file), target_vars, str(output_file))
         status = "✓" if success else "✗"
         print(f"{status} {rel_path}: {message}")
         
@@ -275,11 +177,7 @@ def process_folder_recursive(input_folder, target_vars, output_base_folder=None,
     
     return results
 
-
 def create_conversion_summary(results, summary_file='conversion_summary.txt'):
-    """
-    创建转换结果摘要文件
-    """
     with open(summary_file, 'w', encoding='utf-8') as f:
         f.write("MAT文件转换摘要\n")
         f.write("=" * 50 + "\n\n")
@@ -300,19 +198,26 @@ def create_conversion_summary(results, summary_file='conversion_summary.txt'):
         for item in results:
             if not item['success']:
                 f.write(f"{os.path.basename(item['input'])}: {item['message']}\n")
-    
-    print(f"摘要已保存到 {summary_file}")
-
 
 
 class MatToNpzConverterGUI:
     def __init__(self, root):
         self.root = root
         self.root.title("MAT-NPZ 批量转换工具")
-        self.root.geometry("600x400")
+        # 将高度从 400 调整到 650，以容纳 8 个变量和日志框
+        self.root.geometry("600x650") 
         
-        # 变量列表
-        self.target_vars = ['angle_ideal', 'angle_residual']
+        # 变量列表 (已更新为指定的 8 个变量)
+        self.target_vars = [
+            'angle_ideal', 
+            'cable_tensor',
+            'angle_real_encoder', 
+            'angle_real',
+            'angle_residual_encoder', 
+            'angle_residual',
+            'cable_residual', 
+            'angle_residual_encoder'
+        ]
         
         self.setup_ui()
     
@@ -342,9 +247,9 @@ class MatToNpzConverterGUI:
             entry.grid(row=i, column=1, padx=5, pady=2)
             self.var_entries.append(entry)
         
-        # 添加变量按钮
-        tk.Button(self.var_frame, text="+ 添加变量", command=self.add_var_entry).grid(row=len(self.target_vars), column=0, pady=5)
-        tk.Button(self.var_frame, text="- 删除变量", command=self.remove_var_entry).grid(row=len(self.target_vars), column=1, pady=5)
+        # 添加/删除变量按钮 (将 row 设置为 100，避免被动态添加的新变量行覆盖)
+        tk.Button(self.var_frame, text="+ 添加变量", command=self.add_var_entry).grid(row=100, column=0, pady=5)
+        tk.Button(self.var_frame, text="- 删除变量", command=self.remove_var_entry).grid(row=100, column=1, pady=5)
         
         # 进度条
         self.progress = ttk.Progressbar(self.root, mode='indeterminate')
@@ -372,7 +277,6 @@ class MatToNpzConverterGUI:
         folder = filedialog.askdirectory(title="选择包含MAT文件的文件夹")
         if folder:
             self.input_var.set(folder)
-            # 自动设置输出文件夹
             if not self.output_var.get():
                 self.output_var.set(os.path.join(folder, 'npz_output'))
     
@@ -392,6 +296,7 @@ class MatToNpzConverterGUI:
         if self.var_entries:
             entry = self.var_entries.pop()
             entry.destroy()
+            # 这里的 Label 不会被销毁，但它会被隐藏在新添加的输入框下方
     
     def log(self, message):
         self.log_text.insert('end', message + '\n')
@@ -402,7 +307,6 @@ class MatToNpzConverterGUI:
         self.log_text.delete(1.0, 'end')
     
     def start_conversion(self):
-        # 获取输入输出路径
         input_folder = self.input_var.get()
         output_folder = self.output_var.get()
         
@@ -414,18 +318,15 @@ class MatToNpzConverterGUI:
             messagebox.showerror("错误", "请输入输出文件夹")
             return
         
-        # 获取目标变量
         target_vars = [entry.get().strip() for entry in self.var_entries if entry.get().strip()]
         if not target_vars:
             messagebox.showerror("错误", "请至少指定一个变量")
             return
         
-        # 开始转换
         self.status_var.set("转换中...")
         self.progress.start()
         
         try:
-            # 调用批量转换函数
             success, errors = batch_mat_to_npz(
                 mat_folder=input_folder,
                 target_vars=target_vars,
@@ -433,7 +334,6 @@ class MatToNpzConverterGUI:
                 overwrite=True
             )
             
-            # 显示结果
             self.status_var.set(f"完成! 成功: {len(success)}, 失败: {len(errors)}")
             self.log(f"\n转换完成!")
             self.log(f"成功: {len(success)} 个文件")
@@ -449,7 +349,6 @@ class MatToNpzConverterGUI:
         finally:
             self.progress.stop()
 
-# 运行GUI
 if __name__ == "__main__":
     root = tk.Tk()
     app = MatToNpzConverterGUI(root)
