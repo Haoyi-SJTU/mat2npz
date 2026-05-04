@@ -16,7 +16,7 @@ This is a Python Tkinter-based graphical interface tool for batch converting MAT
 ## System Requirements
 
 ### Required Environment
-- Python 3.6 or higher
+- Python 3.8 or higher
 - The following Python libraries:
   - NumPy
   - SciPy
