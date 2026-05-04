@@ -1,5 +1,8 @@
 # MAT to NPZ Batch Converter Tool
 
+![Python](https://img.shields.io/badge/python-3.8%2B-brightgreen)
+![License](https://img.shields.io/badge/License-MIT-blue.svg)
+
 ## Overview
 
 This is a Python Tkinter-based graphical interface tool for batch converting MATLAB `.mat` files to NumPy `.npz` files. The tool allows you to extract specified variables from multiple MAT files and save them as NPZ files with the same name, filtering out unnecessary metadata.
